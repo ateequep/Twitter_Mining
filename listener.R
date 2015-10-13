@@ -1,9 +1,14 @@
+## Twitter Listener - Streaming tweets real time based on list of keywords provided
+## Author - Ateeque Patel
+
+## Reads the keywords from a file to capture related tweets and parses raw feeds to create
+## hourly output feeds in simplied, structured csv format
+
 
 ## load the required libraries
 if (!require("ROAuth")) install.packages("ROAuth")
 if (!require("streamR")) install.packages("streamR")
 if (!require("data.table")) install.packages("data.table")
-if (!require("dplyr")) install.packages("dplyr")
 
 ## helper function for generating file names
 createHourlyFile <- function() {
@@ -17,7 +22,7 @@ ifelse(file.exists("./my_oauth.Rdata"),load("my_oauth.Rdata"),source("./authenti
 ## load the keyword list for tracking
 keywordList <- fread(input = "./Keywords.csv",sep = ",",header = T)[[1]]
 x <- 0
-while (x<3){
+while (x<10){
 fileName <-  createHourlyFile()    
 filterStream(file.name= paste0(fileName,".json") , track= keywordList, timeout=60, oauth=my_oauth,language = "en")
 parsedTweets <- parseTweets(paste0(fileName,".json"))
