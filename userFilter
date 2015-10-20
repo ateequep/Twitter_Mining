@@ -1,0 +1,28 @@
+# load library and OAuth
+if (!require("ROAuth")) install.packages("ROAuth")
+if (!require("streamR")) install.packages("streamR")
+if (!require("data.table")) install.packages("data.table")
+
+#userStream( file.name="my_timeline.json", with="followings", timeout=60, oauth=my_oauth )
+#parsedTweets <- parseTweets("my_timeline.json")
+
+## helper function for generating file names
+createHourlyFile <- function() {
+        ## create the file name based on the system date and hour
+        fileName <- paste0("userStreams_", format(Sys.time(), "%Y%m%d%H%M"))
+}
+
+## autheticate the pull
+ifelse(file.exists("./my_oauth.Rdata"),load("my_oauth.Rdata"),source("./authentication.R"))
+
+## read the user ids
+specifiedUserIds <- list(...) 
+
+x <- 0
+while (x<10){
+        fileName <-  createHourlyFile()    
+        filterStream(file.name= paste0(fileName,".json") , follow=specifiedUserIds, timeout=60, oauth=my_oauth,language = "en")
+        parsedTweets <- parseTweets(paste0(fileName,".json"))
+        write.csv(parsedTweets,paste0(fileName,".csv"),row.names=F)
+        x<-x+1
+}
